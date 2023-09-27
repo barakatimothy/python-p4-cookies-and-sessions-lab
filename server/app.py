@@ -20,6 +20,34 @@ def clear_session():
     session['page_views'] = 0
     return {'message': '200: Successfully cleared session data.'}, 200
 
+from flask import request
+
+@app.route('/articles', methods=['GET'])
+def get_all_articles():
+    # Get all articles from the database
+    articles = Article.query.all()
+
+    # Check if there are any articles
+    if articles:
+        # Create a list to store article data
+        articles_data = []
+
+        # Iterate through each article and add its data to the list
+        for article in articles:
+            articles_data.append({
+                'id': article.id,
+                'title': article.title,
+                'content': article.content,
+                # Add other fields as needed
+            })
+
+        # Return JSON response with the list of articles
+        return jsonify({'articles': articles_data}), 200
+    else:
+        # Return a JSON response indicating that no articles were found
+        return jsonify({'message': 'No articles found'}), 404
+
+
 @app.route('/articles/<int:id>', methods=['GET'])
 def show_article(id):
     # Set the initial value to 0 if it's the first request for this user
